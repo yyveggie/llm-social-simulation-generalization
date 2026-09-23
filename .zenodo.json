@@ -1,0 +1,16 @@
+{
+  "upload_type": "software",
+  "title": "Code for cross-model replications of five LLM-based social simulation paradigms",
+  "description": "<p>Code used to run five published social-simulation paradigms on contemporary large language models through an OpenAI-compatible endpoint, and to parse and analyse the responses: a behavioural Turing test, simulated altruism, identity-prompted generation, generation and scoring of resumes, and a multi-agent naming game. The model responses are archived at https://doi.org/10.5281/zenodo.22914156.</p>",
+  "creators": [
+    {"name": "Zhang, Cheng", "affiliation": "School of Management, Fudan University"},
+    {"name": "Chen, Yuyu", "affiliation": "School of Information Management and Engineering, Shanghai University of Finance and Economics"},
+    {"name": "Hu, Shihui", "affiliation": "School of Management, Fudan University"}
+  ],
+  "license": "MIT",
+  "access_right": "open",
+  "keywords": ["large language models", "social simulation", "replication", "behavioural economics", "multi-agent systems"],
+  "related_identifiers": [
+    {"identifier": "10.5281/zenodo.22914156", "relation": "isSupplementTo", "scheme": "doi"}
+  ]
+}
