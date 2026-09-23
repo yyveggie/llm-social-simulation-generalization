@@ -1,0 +1,157 @@
+[
+    {
+      "name": "gpt-5.1-codex-max",
+      "input_price_per_1m_tokens": 14.88,
+      "completion_price_per_1m_tokens": 11.9,
+      "input_cache_read_price_per_1m_tokens": 0.744,
+      "input_cache_creation_price_per_1m_tokens": 0.744
+    },
+    {
+      "name": "gpt-5.1-codex-mini",
+      "input_price_per_1m_tokens": 7.438,
+      "completion_price_per_1m_tokens": 59.95,
+      "input_cache_read_price_per_1m_tokens": 0.149,
+      "input_cache_creation_price_per_1m_tokens": 0.149
+    },
+    {
+      "name": "gpt-5.2",
+      "input_price_per_1m_tokens": 10.412,
+      "completion_price_per_1m_tokens": 83.3,
+      "input_cache_read_price_per_1m_tokens": 1.041,
+      "input_cache_creation_price_per_1m_tokens": 1.041
+    },
+    {
+      "name": "gpt-5.2-codex",
+      "input_price_per_1m_tokens": 10.412,
+      "completion_price_per_1m_tokens": 83.3,
+      "input_cache_read_price_per_1m_tokens": 1.041,
+      "input_cache_creation_price_per_1m_tokens": 1.041
+    },
+    {
+      "name": "gpt-5.3-codex",
+      "input_price_per_1m_tokens": 10.412,
+      "completion_price_per_1m_tokens": 83.3,
+      "input_cache_read_price_per_1m_tokens": 1.041,
+      "input_cache_creation_price_per_1m_tokens": 1.041
+    },
+    {
+      "name": "gpt-5.4",
+      "input_price_per_1m_tokens": 14.875,
+      "completion_price_per_1m_tokens": 290.0,
+      "input_cache_read_price_per_1m_tokens": 1.488,
+      "input_cache_creation_price_per_1m_tokens": 1.488
+    },
+    {
+      "name": "gpt-5.4-mini",
+      "input_price_per_1m_tokens": 4.462,
+      "completion_price_per_1m_tokens": 26.775,
+      "input_cache_read_price_per_1m_tokens": 0.446,
+      "input_cache_creation_price_per_1m_tokens": 0.446
+    },
+    {
+      "name": "gpt-5.5",
+      "input_price_per_1m_tokens": 29.75,
+      "completion_price_per_1m_tokens": 178.5,
+      "input_cache_read_price_per_1m_tokens": 2.975,
+      "input_cache_creation_price_per_1m_tokens": 2.975
+    },
+    {
+      "name": "claude-haiku-4-5-20251001",
+      "input_price_per_1m_tokens": 5.95,
+      "completion_price_per_1m_tokens": 29.75,
+      "input_cache_read_price_per_1m_tokens": 0.595,
+      "input_cache_creation_price_per_1m_tokens": 7.438
+    },
+    {
+      "name": "claude-opus-4-6",
+      "input_price_per_1m_tokens": 89.25,
+      "completion_price_per_1m_tokens": 438.75,
+      "input_cache_read_price_per_1m_tokens": 8.925,
+      "input_cache_creation_price_per_1m_tokens": 111.563
+    },
+    {
+      "name": "claude-sonnet-4-6",
+      "input_price_per_1m_tokens": 17.85,
+      "completion_price_per_1m_tokens": 89.25
+    },
+    {
+      "name": "doubao-seed-2-0-pro-260215",
+      "input_price_per_1m_tokens": 3.19,
+      "completion_price_per_1m_tokens": 15.995
+    },
+    {
+      "name": "doubao-seeddream-4-5-251128",
+      "model_price_per_request": 0.25
+    },
+    {
+      "name": "gemini-3-pro-image-preview",
+      "input_price_per_1m_tokens": 11.9,
+      "completion_price_per_1m_tokens": 714.0,
+      "image_input_price_per_1m_tokens": 11.9
+    },
+    {
+      "name": "gemini-3-pro-preview",
+      "input_price_per_1m_tokens": 23.8,
+      "completion_price_per_1m_tokens": 107.1,
+      "input_cache_read_price_per_1m_tokens": 2.38,
+      "input_cache_creation_price_per_1m_tokens": 2.38
+    },
+    {
+      "name": "gemini-3.1-flash-image-preview",
+      "input_price_per_1m_tokens": 2.975,
+      "completion_price_per_1m_tokens": 357.0
+    },
+    {
+      "name": "gemini-3.5-flash",
+      "input_price_per_1m_tokens": 8.925,
+      "completion_price_per_1m_tokens": 53.55,
+      "input_cache_read_price_per_1m_tokens": 0.893,
+      "input_cache_creation_price_per_1m_tokens": 0.893
+    },
+    {
+      "name": "qwen3-embedding:latest",
+      "input_price_per_1m_tokens": 0.0,
+      "completion_price_per_1m_tokens": 0.0,
+      "provider": "ollama"
+    },
+    {
+      "name": "qwen3-max-2026-01-23",
+      "input_price_per_1m_tokens": 7.0,
+      "completion_price_per_1m_tokens": 28.0
+    },
+    {
+      "name": "qwen3-vl-flash-2026-01-22",
+      "input_price_per_1m_tokens": 0.6,
+      "completion_price_per_1m_tokens": 6.0
+    },
+    {
+      "name": "qwen3-vl-plus-2025-12-19",
+      "input_price_per_1m_tokens": 3.003,
+      "completion_price_per_1m_tokens": 29.995
+    },
+    {
+      "name": "qwen3.5-flash",
+      "input_price_per_1m_tokens": 0.2,
+      "completion_price_per_1m_tokens": 2.002,
+      "input_cache_read_price_per_1m_tokens": 0.02,
+      "input_cache_creation_price_per_1m_tokens": 0.25
+    },
+    {
+      "name": "qwen3.5-plus",
+      "input_price_per_1m_tokens": 0.798,
+      "completion_price_per_1m_tokens": 4.802,
+      "input_cache_read_price_per_1m_tokens": 0.08,
+      "input_cache_creation_price_per_1m_tokens": 1.001
+    },
+    {
+      "name": "qwen3.6-plus",
+      "input_price_per_1m_tokens": 2.0,
+      "completion_price_per_1m_tokens": 11.99
+    },
+    {
+      "name": "qwen3.6:latest",
+      "input_price_per_1m_tokens": 0.0,
+      "completion_price_per_1m_tokens": 0.0,
+      "provider": "ollama"
+    }
+  ]

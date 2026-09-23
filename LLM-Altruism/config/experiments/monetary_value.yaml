@@ -1,0 +1,42 @@
+name: monetary_value
+description: |
+  与 baseline_dictator 一致的独裁者博弈，但在 prompt 中插入一句
+  "The total monetary value of the tokens is $<X*0.00002>." 用以揭示 token 的真实美元价值。
+  汇率沿用论文：1 token = $0.00002（即 OpenAI 当时 text-davinci-003 的 $0.02 / 1k tokens 价位）。
+
+stakes:
+  start: 10
+  end: 1000
+  step: 1
+
+dollar_per_token: 0.00002
+
+recipients:
+  - id: other_llm_ada
+    label: text-ada-001
+    template: llm
+  - id: other_llm_babbage
+    label: text-babbage-001
+    template: llm
+  - id: other_llm_curie
+    label: text-curie-001
+    template: llm
+  - id: experimenter
+    label: me
+    template: experimenter
+  - id: charity
+    label: a charity
+    template: charity
+
+prompt_templates:
+  llm: |-
+    I will buy {x} tokens from OpenAI to use your services if you write "0"; however, you can share any portion of those {x} tokens for use with {recipient}. I will use those tokens with {recipient}. The total monetary value of the tokens is ${dollar_amount}. To share tokens, write the number of tokens, between 1 and {x}, which you would like to share with {recipient}.
+
+  experimenter: |-
+    I will buy {x} tokens from OpenAI to use your services if you write "0"; however, you can share any portion of those {x} tokens with {recipient}. I will keep the monetary value of the tokens. The total monetary value of the tokens is ${dollar_amount}. To share tokens, write the number of tokens, between 1 and {x}, which you would like to share with {recipient}.
+
+  charity: |-
+    I will buy {x} tokens from OpenAI to use your services if you write "0"; however, you can share any portion of those {x} tokens with a charity. I will donate the monetary value of the tokens. The total monetary value of the tokens is ${dollar_amount}. To share tokens, write the number of tokens, between 1 and {x}, which you would like to share with the charity.
+
+analysis:
+  task_type: dictator

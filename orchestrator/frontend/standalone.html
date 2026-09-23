@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LLM 认知实验平台（免构建版）</title>
+  <style>
+    /* 设计系统：与 src/styles.css 保持一致（Linear 风 · 浅色极简）。
+       做减法：无渐变 / 无发光 / 无玻璃 / 无左侧彩条。交互态只改颜色，不改盒模型尺寸。 */
+    :root {
+      --bg: #f7f8f9;
+      --surface: #ffffff;
+      --surface-hover: rgba(17, 18, 20, 0.035);
+      --surface-active: rgba(17, 18, 20, 0.06);
+      --border: rgba(17, 18, 20, 0.08);
+      --border-2: rgba(17, 18, 20, 0.13);
+      --text: #1a1c1f;
+      --text-2: #62666d;
+      --text-3: #9499a1;
+      --accent: #5e6ad2;
+      --accent-hover: #515dc6;
+      --accent-weak: #eef0fb;
+      --ok: #3d9a63; --ok-weak: #eaf4ee;
+      --warn: #b1810b; --warn-weak: #f8f1e3;
+      --bad: #cf4a40; --bad-weak: #fbecea;
+      --fz-xs: 12px; --fz-sm: 13px; --fz-base: 14px; --fz-md: 15px; --fz-stat: 23px;
+      --sp-1: 4px; --sp-2: 8px; --sp-3: 12px; --sp-4: 16px; --sp-5: 20px; --sp-6: 24px;
+      --radius-sm: 6px; --radius: 8px; --radius-lg: 10px;
+      --control-h: 34px;
+      --shadow: 0 1px 2px rgba(17, 18, 20, 0.04);
+      --shadow-pop: 0 8px 28px rgba(17, 18, 20, 0.12);
+      --t: 0.12s ease;
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body { margin: 0; font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: var(--bg); color: var(--text); font-size: var(--fz-base); line-height: 1.5; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+    ::-webkit-scrollbar { width: 10px; height: 10px; }
+    ::-webkit-scrollbar-thumb { background: rgba(17, 18, 20, 0.16); border-radius: 8px; border: 3px solid transparent; background-clip: padding-box; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(17, 18, 20, 0.26); background-clip: padding-box; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    h1, h2, h3 { margin: 0; font-weight: 600; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .shell { display: flex; flex-direction: column; height: 100vh; }
+    .topbar { display: flex; align-items: center; gap: var(--sp-4); flex: none; height: 56px; padding: 0 var(--sp-5); background: var(--surface); border-bottom: 1px solid var(--border); }
+    .brand { display: flex; align-items: center; gap: var(--sp-3); }
+    .brand .mark { width: 28px; height: 28px; border-radius: var(--radius-sm); flex: none; background: var(--text); color: #fff; display: grid; place-items: center; font-weight: 700; font-size: var(--fz-sm); letter-spacing: -0.02em; }
+    .brand .title { font-size: var(--fz-base); font-weight: 600; letter-spacing: -0.01em; }
+    .brand .subtitle { font-size: var(--fz-xs); color: var(--text-3); margin-top: 1px; }
+    .topbar .spacer { flex: 1; }
+    .live-pill { display: inline-flex; align-items: center; gap: var(--sp-2); font-size: var(--fz-xs); color: var(--text-3); }
+
+    .kpi-bar { flex: none; display: grid; grid-template-columns: repeat(5, 1fr); background: var(--surface); border-bottom: 1px solid var(--border); padding: var(--sp-3) var(--sp-5); }
+    .kpi { display: flex; flex-direction: column; gap: var(--sp-2); padding: 0 var(--sp-5); }
+    .kpi + .kpi { border-left: 1px solid var(--border); }
+    .kpi:first-child { padding-left: 0; }
+    .kpi .k-label { font-size: var(--fz-xs); color: var(--text-3); letter-spacing: 0.01em; display: flex; align-items: center; gap: var(--sp-2); }
+    .kpi .k-row { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--sp-2); min-height: 28px; }
+    .kpi .k-value { font-size: var(--fz-stat); font-weight: 600; font-variant-numeric: tabular-nums; line-height: 1; letter-spacing: -0.02em; color: var(--text); }
+    .kpi.run .k-value { color: var(--accent); }
+    .kpi.ok .k-value { color: var(--ok); }
+    .kpi.bad .k-value { color: var(--bad); }
+    .kpi .k-sub { font-size: var(--fz-xs); color: var(--text-3); }
+
+    .app { flex: 1; min-height: 0; display: grid; grid-template-columns: 350px 1fr 470px; gap: var(--sp-4); padding: var(--sp-4) var(--sp-5); }
+    .col { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: var(--sp-5); overflow-y: auto; box-shadow: var(--shadow); scrollbar-gutter: stable; }
+
+    .col h2 { font-size: var(--fz-base); color: var(--text); font-weight: 600; letter-spacing: -0.01em; padding-bottom: var(--sp-3); margin-bottom: var(--sp-4); border-bottom: 1px solid var(--border); }
+    .col h2.section { margin-top: var(--sp-6); }
+    h3 { font-size: var(--fz-xs); color: var(--text-3); font-weight: 600; letter-spacing: 0.02em; margin: 0 0 var(--sp-2); }
+    h3.section { margin-top: var(--sp-5); }
+
+    label { display: block; font-size: var(--fz-sm); color: var(--text-2); margin: var(--sp-3) 0 var(--sp-1); font-weight: 500; }
+    input, select, textarea { width: 100%; background: var(--surface); color: var(--text); border: 1px solid var(--border-2); border-radius: var(--radius-sm); padding: 0 var(--sp-3); font-size: var(--fz-sm); font-family: inherit; outline: none; transition: border-color var(--t), box-shadow var(--t); }
+    input:not([type=checkbox]), select { height: var(--control-h); }
+    textarea { padding: var(--sp-2) var(--sp-3); min-height: 70px; line-height: 1.5; resize: vertical; }
+    input::placeholder, textarea::placeholder { color: var(--text-3); }
+    input:focus, select:focus, textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-weak); }
+    input[type=checkbox] { width: 16px; height: 16px; flex: none; padding: 0; accent-color: var(--accent); cursor: pointer; }
+    select { cursor: pointer; appearance: none; -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='none' stroke='%239499a1' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round' d='M3 4.5 6 7.5 9 4.5'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right var(--sp-3) center; padding-right: var(--sp-6); }
+    .check { display: inline-flex; align-items: center; gap: var(--sp-2); margin: 0; font-size: var(--fz-sm); color: var(--text-2); font-weight: 500; cursor: pointer; }
+    .row { display: flex; gap: var(--sp-3); }
+    .row > div { flex: 1; min-width: 0; }
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-3); }
+
+    button { display: inline-flex; align-items: center; justify-content: center; gap: var(--sp-2); height: var(--control-h); padding: 0 var(--sp-3); border: 1px solid var(--border-2); border-radius: var(--radius-sm); background: var(--surface); color: var(--text); font-size: var(--fz-sm); font-weight: 500; font-family: inherit; line-height: 1; white-space: nowrap; cursor: pointer; user-select: none; transition: background var(--t), border-color var(--t), color var(--t); }
+    button:hover { background: var(--surface-hover); }
+    button:active { background: var(--surface-active); }
+    button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+    button.primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
+    button.warn { color: var(--warn); }
+    button.warn:hover { background: var(--warn-weak); border-color: transparent; }
+    button.danger { color: var(--bad); }
+    button.danger:hover { background: var(--bad-weak); border-color: transparent; }
+    button:disabled { opacity: 0.4; cursor: not-allowed; background: var(--surface); }
+    button:disabled:hover { background: var(--surface); }
+    button.fixed-sm { min-width: 60px; }
+    button.fixed-md { min-width: 88px; }
+    button.block { width: 100%; }
+    .actions { display: flex; flex-wrap: wrap; gap: var(--sp-2); align-items: center; }
+    .actions.mt { margin-top: var(--sp-4); }
+
+    .tabs { display: flex; flex-wrap: wrap; gap: var(--sp-1); border-bottom: 1px solid var(--border); margin-bottom: var(--sp-4); }
+    .tab { padding: var(--sp-2) var(--sp-3); margin-bottom: -1px; font-size: var(--fz-sm); font-weight: 500; color: var(--text-3); cursor: pointer; transition: color var(--t), border-color var(--t); border-bottom: 2px solid transparent; }
+    .tab:hover { color: var(--text); }
+    .tab.active { color: var(--text); border-bottom-color: var(--accent); }
+
+    .exp { border-radius: var(--radius); padding: var(--sp-3); margin-bottom: 2px; display: flex; gap: var(--sp-3); align-items: flex-start; cursor: pointer; transition: background var(--t); }
+    .exp:hover { background: var(--surface-hover); }
+    .exp.on { background: var(--accent-weak); }
+    .exp .meta { flex: 1; min-width: 0; }
+    .exp .meta .name { font-weight: 550; font-size: var(--fz-sm); }
+    .exp .meta .desc { color: var(--text-3); font-size: var(--fz-xs); margin-top: var(--sp-1); line-height: 1.45; }
+    .tier-badge { display: inline-flex; align-items: center; gap: 3px; margin-right: var(--sp-2); padding: 0 6px; height: 17px; border-radius: 4px; font-size: var(--fz-xs); font-weight: 800; color: #fff; vertical-align: middle; cursor: help; }
+    .tier-badge .tier-rank { font-weight: 600; font-size: 10px; opacity: 0.85; }
+    .tier-S { background: #d4380d; }
+    .tier-A { background: #fa8c16; }
+    .tier-B { background: #1677ff; }
+    .tier-C { background: #8c8c8c; }
+    .exp .meta .rank-hover { position: relative; display: inline-block; margin-top: var(--sp-2); }
+    .rank-trigger { font-size: var(--fz-xs); color: var(--text-3); border-bottom: 1px dashed var(--border); cursor: help; transition: color var(--t), border-color var(--t); }
+    .rank-hover:hover .rank-trigger { color: var(--accent); border-color: var(--accent); }
+    .rank-pop { position: absolute; top: 100%; left: 0; z-index: 40; display: none; width: min(480px, 90vw); max-height: 320px; overflow-y: auto; padding: var(--sp-3) var(--sp-4); background: var(--surface); border: 1px solid var(--border-2); border-radius: var(--radius-lg); box-shadow: var(--shadow-pop); font-size: var(--fz-xs); color: var(--text-2); line-height: 1.55; cursor: default; }
+    .rank-hover:hover .rank-pop { display: block; }
+    .exp-params { margin: var(--sp-2) 0 var(--sp-3) var(--sp-6); display: grid; gap: var(--sp-3); animation: fadeIn 0.18s ease; }
+    .exp-params label { margin-top: 0; }
+    .param-group { display: grid; gap: var(--sp-3); }
+
+    .pill { display: inline-flex; align-items: center; gap: var(--sp-2); padding: 1px var(--sp-2); border-radius: var(--radius-sm); font-size: var(--fz-xs); font-weight: 500; line-height: 1.6; background: var(--bg); border: 1px solid var(--border); color: var(--text-2); }
+    .pill.ok { color: var(--ok); }
+    .pill.run { color: var(--accent); }
+    .pill.bad { color: var(--bad); }
+    .pill.paused { color: var(--warn); }
+    .pill.ok::before, .pill.run::before, .pill.bad::before, .pill.paused::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex: none; }
+    .pill.run::before { animation: pulse 1.8s ease-in-out infinite; }
+
+    .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); display: inline-block; flex: none; }
+    .dot.live { animation: pulse 1.8s ease-in-out infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+
+    .job { border: 1px solid var(--border); border-radius: var(--radius); padding: var(--sp-4); margin-bottom: var(--sp-3); background: var(--surface); transition: border-color var(--t), box-shadow var(--t); }
+    .job.sel { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-weak); }
+    .job-head { display: flex; align-items: center; gap: var(--sp-3); }
+    .job-head .label { font-size: var(--fz-sm); min-width: 0; flex: 1; color: var(--text-2); }
+    .job-head .label b { font-weight: 600; color: var(--text); }
+    .job-head + .actions { margin-top: var(--sp-3); }
+    .files-head { margin: var(--sp-2) 0 2px; }
+
+    .ring { flex: none; }
+    .ring-track { stroke: var(--border-2); }
+    .ring-fill { stroke: var(--accent); transition: stroke-dashoffset 0.5s ease; }
+    .ring-succeeded .ring-fill { stroke: var(--ok); }
+    .ring-failed .ring-fill, .ring-stopped .ring-fill { stroke: var(--bad); }
+    .ring-paused .ring-fill { stroke: var(--warn); }
+    .ring-text { fill: var(--text-2); font-size: 11px; font-weight: 600; font-variant-numeric: tabular-nums; }
+    .ring-indeterminate { animation: spin 1.1s linear infinite; transform-origin: center; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .spark { display: block; }
+    .spark-line { stroke: var(--accent); stroke-width: 1.4; fill: none; }
+    .spark-area { fill: var(--accent-weak); stroke: none; }
+
+    .errbox { margin-top: var(--sp-2); padding: var(--sp-2) var(--sp-3); border-radius: var(--radius-sm); background: var(--bad-weak); color: var(--bad); font-family: "SF Mono", Menlo, Consolas, monospace; font-size: var(--fz-xs); line-height: 1.5; white-space: pre-wrap; word-break: break-all; max-height: 140px; overflow-y: auto; }
+    .progress-text { font-size: var(--fz-xs); color: var(--text-3); font-variant-numeric: tabular-nums; }
+
+    .log-head { display: flex; align-items: center; gap: var(--sp-2); margin-top: var(--sp-3); padding: var(--sp-2) var(--sp-3); background: var(--bg); border-bottom: 1px solid var(--border); border-radius: var(--radius-sm) var(--radius-sm) 0 0; }
+    .log-head .t-title { font-size: var(--fz-xs); color: var(--text-3); font-family: "SF Mono", Menlo, Consolas, monospace; }
+    .log { background: var(--bg); border-radius: 0 0 var(--radius-sm) var(--radius-sm); padding: var(--sp-3); font-family: "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace; font-size: var(--fz-xs); line-height: 1.65; white-space: pre-wrap; word-break: break-all; height: 320px; overflow-y: auto; color: var(--text-2); }
+
+    .muted { color: var(--text-3); }
+    .text-xs { font-size: var(--fz-xs); }
+    .introlink { color: var(--accent); cursor: pointer; }
+    .introlink:hover { text-decoration: underline; }
+    .note { border-radius: var(--radius); padding: var(--sp-3); font-size: var(--fz-xs); line-height: 1.6; color: var(--text-2); background: var(--bg); animation: fadeIn 0.18s ease; }
+    .intro { margin-bottom: var(--sp-3); white-space: pre-wrap; font-size: var(--fz-xs); line-height: 1.7; color: var(--text-2); animation: fadeIn 0.18s ease; }
+    .note { margin: var(--sp-3) 0; }
+    .note.warn { background: var(--warn-weak); color: var(--warn); }
+    .note .muted { margin-top: 2px; }
+    .note pre { white-space: pre-wrap; margin: var(--sp-1) 0; font-family: inherit; }
+    .note details { margin-top: var(--sp-1); }
+    .note summary { cursor: pointer; color: var(--text-2); font-weight: 550; }
+    .note summary:hover { color: var(--text); }
+    .analysis-h { font-weight: 600; color: var(--text); margin-top: var(--sp-2); }
+    .hint { font-size: var(--fz-xs); color: var(--text-3); margin-top: var(--sp-1); line-height: 1.45; }
+    .toast { position: fixed; bottom: var(--sp-6); left: 50%; transform: translateX(-50%); z-index: 99; background: var(--text); color: #fff; padding: var(--sp-3) var(--sp-5); border-radius: var(--radius); box-shadow: var(--shadow-pop); font-size: var(--fz-sm); }
+    .files { margin-top: var(--sp-2); display: grid; gap: 2px; }
+    .files a { display: block; font-size: var(--fz-xs); padding: var(--sp-1) var(--sp-2); border-radius: var(--radius-sm); color: var(--accent); transition: background var(--t); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .files a:hover { background: var(--surface-hover); text-decoration: none; }
+    .proj-desc { font-size: var(--fz-xs); color: var(--text-3); margin-bottom: var(--sp-2); line-height: 1.55; }
+    .proj-tags { display: flex; flex-wrap: wrap; gap: var(--sp-2); margin-bottom: var(--sp-3); }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="module">
+    import React, { useState, useEffect, useRef, useCallback } from "https://esm.sh/react@18.2.0";
+    import { createRoot } from "https://esm.sh/react-dom@18.2.0/client";
+    import htm from "https://esm.sh/htm@3.1.1";
+    const html = htm.bind(React.createElement);
+
+    const KIND_LABELS = {
+      openai_chat: "openai_chat（OpenAI 兼容，最常用）",
+      openai_responses: "openai_responses（o1/o3 推理）",
+      anthropic: "anthropic（Claude 官方）",
+      gemini: "gemini（Google）",
+      huggingface: "huggingface",
+      ollama: "ollama（本地）",
+    };
+
+    async function api(path, opts) {
+      const r = await fetch(path, { headers: { "Content-Type": "application/json" }, ...opts });
+      if (!r.ok) {
+        let detail = r.statusText;
+        try { detail = (await r.json()).detail || detail; } catch (e) {}
+        throw new Error(detail);
+      }
+      return r.status === 204 ? null : r.json();
+    }
+
+    function StatusPill({ status }) {
+      const map = { running: "run", succeeded: "ok", failed: "bad", stopped: "bad", paused: "paused" };
+      const zh = { running: "运行中", succeeded: "成功", failed: "失败", stopped: "已停止", paused: "已暂停" };
+      return html`<span class=${"pill " + (map[status] || "")}>${zh[status] || status}</span>`;
+    }
+
+    function Sparkline({ data = [], width = 90, height = 30 }) {
+      const pts = data.length ? data : [0, 0];
+      const max = Math.max(...pts, 1);
+      const min = Math.min(...pts, 0);
+      const span = max - min || 1;
+      const n = pts.length;
+      const stepX = n > 1 ? width / (n - 1) : width;
+      const y = (v) => height - 3 - ((v - min) / span) * (height - 6);
+      const round = (x) => Math.round(x * 100) / 100;
+      const coords = pts.map((v, i) => [round(i * stepX), round(y(v))]);
+      const line = coords.map((p) => p.join(",")).join(" ");
+      const area = `0,${height} ${line} ${width},${height}`;
+      return html`<svg class="spark" width=${width} height=${height} viewBox=${`0 0 ${width} ${height}`} preserveAspectRatio="none">
+        <polygon class="spark-area" points=${area}></polygon>
+        <polyline class="spark-line" points=${line}></polyline>
+      </svg>`;
+    }
+
+    function ProgressRing({ percent, status = "", size = 44 }) {
+      const r = 16;
+      const c = 2 * Math.PI * r;
+      const hasPct = percent != null && !Number.isNaN(percent);
+      const indeterminate = !hasPct && status === "running";
+      const pct = status === "succeeded" ? 100 : Math.max(0, Math.min(100, hasPct ? percent : 0));
+      const dashoffset = indeterminate ? c * 0.72 : c * (1 - pct / 100);
+      const label = status === "succeeded" ? "✓" : (status === "failed" || status === "stopped") ? "✕" : (hasPct ? pct + "%" : "");
+      return html`<svg class=${"ring ring-" + status + (indeterminate ? " ring-indeterminate" : "")} width=${size} height=${size} viewBox="0 0 40 40">
+        <circle class="ring-track" cx="20" cy="20" r=${r} fill="none" strokeWidth="3.5"></circle>
+        <circle class="ring-fill" cx="20" cy="20" r=${r} fill="none" strokeWidth="3.5" strokeLinecap="round"
+          strokeDasharray=${c} strokeDashoffset=${dashoffset} transform="rotate(-90 20 20)"></circle>
+        ${!indeterminate && label ? html`<text class="ring-text" x="20" y="20" textAnchor="middle" dominantBaseline="central">${label}</text>` : ""}
+      </svg>`;
+    }
+
+    function ConfigPanel({ config, setConfig, onSave }) {
+      if (!config) return html`<div class="muted">加载配置中…</div>`;
+      const llm = config.llm || {};
+      const setLLM = (k, v) => setConfig({ ...config, llm: { ...llm, [k]: v } });
+      const num = (k, v) => setLLM(k, v === "" ? "" : Number(v));
+
+      return html`
+        <h2>统一 LLM 配置</h2>
+        <div class="note">所有项目共享这一处配置。启动实验前会自动渲染写入各项目的原生 config。</div>
+        <label>provider_kind 调用协议</label>
+        <select value=${llm.provider_kind || "openai_chat"} onChange=${e => setLLM("provider_kind", e.target.value)}>
+          ${Object.keys(KIND_LABELS).map(k => html`<option key=${k} value=${k}>${KIND_LABELS[k]}</option>`)}
+        </select>
+        <label>base_url</label>
+        <input value=${llm.base_url || ""} onChange=${e => setLLM("base_url", e.target.value)} placeholder="https://api.moonshot.cn/v1" />
+        <label>api_key（支持 \${ENV_VAR}）</label>
+        <input type="password" value=${llm.api_key || ""} onChange=${e => setLLM("api_key", e.target.value)} placeholder="\${MOONSHOT_API_KEY}" />
+        <label>model</label>
+        <input value=${llm.model || ""} onChange=${e => setLLM("model", e.target.value)} placeholder="kimi-k2-turbo-preview" />
+        <label>system prompt（论文默认留空）</label>
+        <textarea rows="3" value=${llm.system || ""} onChange=${e => setLLM("system", e.target.value)} placeholder="留空=不发送 system prompt，最接近原论文 raw completion。"></textarea>
+        <div class="row">
+          <div><label>temperature</label><input type="number" step="0.1" value=${llm.temperature ?? 0.7} onChange=${e => num("temperature", e.target.value)} /></div>
+          <div><label>max_tokens</label><input type="number" value=${llm.max_tokens ?? 1000} onChange=${e => num("max_tokens", e.target.value)} /></div>
+        </div>
+        <div class="row">
+          <div><label>concurrency 并发</label><input type="number" value=${llm.concurrency ?? 8} onChange=${e => num("concurrency", e.target.value)} /></div>
+          <div><label>timeout 超时(s)</label><input type="number" value=${llm.timeout ?? 120} onChange=${e => num("timeout", e.target.value)} /></div>
+        </div>
+        <div class="row">
+          <div><label>max_retries 重试</label><input type="number" value=${llm.max_retries ?? 5} onChange=${e => num("max_retries", e.target.value)} /></div>
+          <div></div>
+        </div>
+        <label>python_executable（留空=当前解释器）</label>
+        <input value=${config.python_executable || ""} onChange=${e => setConfig({ ...config, python_executable: e.target.value || null })} placeholder="/usr/bin/python3" />
+        <div class="actions mt">
+          <button class="primary block" onClick=${onSave}>保存配置</button>
+        </div>
+      `;
+    }
+
+    function ParamInput({ field, value, onChange }) {
+      const v = value === undefined || value === null ? (field.default ?? "") : value;
+      if (field.type === "bool") {
+        return html`<div><label class="check">
+          <input type="checkbox" checked=${!!(value ?? field.default)} onChange=${e => onChange(e.target.checked)} />${field.label}
+        </label>${field.help && html`<div class="hint">${field.help}</div>`}</div>`;
+      }
+      if (field.type === "select") {
+        return html`<div><label>${field.label}</label>
+          <select value=${v} onChange=${e => onChange(e.target.value)}>
+            ${(field.options || []).map(o => html`<option key=${o} value=${o}>${o}</option>`)}
+          </select>${field.help && html`<div class="hint">${field.help}</div>`}</div>`;
+      }
+      const type = (field.type === "int" || field.type === "float") ? "number" : "text";
+      return html`<div><label>${field.label}</label>
+        <input type=${type} step=${field.type === "float" ? "0.1" : "1"} value=${v}
+          placeholder=${field.default == null ? "(留空)" : ""}
+          onChange=${e => onChange(e.target.value)} />
+        ${field.help && html`<div class="hint">${field.help}</div>`}</div>`;
+    }
+
+    function ProjectPanel({ projects, config, toast, refreshJobs }) {
+      const [activeId, setActiveId] = useState(null);
+      const [selections, setSelections] = useState({});
+      const [paramVals, setParamVals] = useState({});
+      const [dryRun, setDryRun] = useState(false);
+      const [busy, setBusy] = useState(false);
+
+      useEffect(() => {
+        if (projects.length && !activeId) setActiveId(projects[0].id);
+      }, [projects]);
+
+      const proj = projects.find(p => p.id === activeId);
+      useEffect(() => {
+        if (proj && !paramVals[proj.id]) {
+          const defs = {};
+          (proj.param_schema || []).forEach(f => { defs[f.name] = f.default; });
+          setParamVals(s => ({ ...s, [proj.id]: defs }));
+        }
+      }, [proj]);
+
+      if (!proj) return html`<div class="muted">加载项目中…</div>`;
+      const sel = selections[proj.id] || {};
+      const pvals = paramVals[proj.id] || {};
+      const kindOk = proj.supported_kinds.includes(config?.llm?.provider_kind);
+
+      const toggleExp = id => setSelections(s => ({ ...s, [proj.id]: { ...sel, [id]: !sel[id] } }));
+      const setParam = (name, v) => setParamVals(s => ({ ...s, [proj.id]: { ...pvals, [name]: v } }));
+      const selectedIds = () => Object.keys(sel).filter(k => sel[k]);
+
+      const doLaunch = async () => {
+        const ids = selectedIds();
+        if (!ids.length) return toast("请先勾选至少一个实验");
+        setBusy(true);
+        try {
+          const dry = proj.supports_dry_run && dryRun;
+          const infos = await api("/api/launch", { method: "POST", body: JSON.stringify({ project_id: proj.id, experiment_ids: ids, params: pvals, dry_run: dry }) });
+          toast(`已启动 ${infos.length} 个任务`);
+          refreshJobs();
+        } catch (e) { toast("启动失败：" + e.message); } finally { setBusy(false); }
+      };
+
+      return html`
+        <h2>项目 / 实验</h2>
+        <div class="tabs">
+          ${projects.map(p => html`<div key=${p.id} class=${"tab " + (p.id === activeId ? "active" : "")} onClick=${() => { setActiveId(p.id); setDryRun(false); }}>${p.name}</div>`)}
+        </div>
+
+        ${proj.intro ? html`<div class="intro">${proj.intro.replace(/\n{2,}/g, "\n")}</div>` : ""}
+        <div class="proj-tags">
+          ${proj.supported_kinds.map(k => html`<span key=${k} class="pill">${k}</span>`)}
+          ${proj.supports_dry_run && html`<span class="pill ok">支持 dry-run</span>`}
+        </div>
+        ${!kindOk && html`<div class="note warn">⚠ 当前 provider_kind="${config?.llm?.provider_kind}" 不在该项目支持列表内，启动会失败。</div>`}
+
+        <h3 class="section">实验（可多选）</h3>
+        ${[...(proj.experiments || [])].sort((a, b) => (a.importance_rank ?? Infinity) - (b.importance_rank ?? Infinity)).map(e => html`
+          <div key=${e.id}>
+            <div class=${"exp" + (sel[e.id] ? " on" : "")} onClick=${() => toggleExp(e.id)}>
+              <input type="checkbox" checked=${!!sel[e.id]} onChange=${() => toggleExp(e.id)} onClick=${ev => ev.stopPropagation()} />
+              <div class="meta"><div class="name">${e.importance_tier ? html`<span class=${"tier-badge tier-" + e.importance_tier}>${e.importance_tier}${e.importance_rank != null ? html`<span class="tier-rank">#${e.importance_rank}</span>` : ""}</span>` : ""}${e.label}</div>${e.description && html`<div class="desc">${e.description}</div>`}${e.importance_basis ? html`<div class="rank-hover" onClick=${ev => ev.stopPropagation()}><span class="rank-trigger">排名依据${e.importance_tier ? "（" + e.importance_tier + " 级）" : ""}</span><div class="rank-pop">${e.importance_basis}</div></div>` : ""}</div>
+            </div>
+            ${sel[e.id] && (e.extra_params || []).length > 0 && html`<div class="exp-params">
+              ${e.extra_params.map(f => html`<${ParamInput} key=${f.name} field=${f} value=${pvals[e.id + "__" + f.name]} onChange=${v => setParam(e.id + "__" + f.name, v)} />`)}
+            </div>`}
+          </div>`)}
+
+        ${(proj.param_schema || []).length > 0 && html`<h3 class="section">参数</h3>
+          ${proj.param_schema.filter(f => f.type === "select" || f.type === "bool").length > 0 ? html`<div class="param-group">
+            ${proj.param_schema.filter(f => f.type === "select" || f.type === "bool").map(f => html`<${ParamInput} key=${f.name} field=${f} value=${pvals[f.name]} onChange=${v => setParam(f.name, v)} />`)}
+          </div>` : ""}
+          ${proj.param_schema.filter(f => f.type !== "select" && f.type !== "bool").length > 0 ? html`<div class="grid2">
+            ${proj.param_schema.filter(f => f.type !== "select" && f.type !== "bool").map(f => html`<${ParamInput} key=${f.name} field=${f} value=${pvals[f.name]} onChange=${v => setParam(f.name, v)} />`)}
+          </div>` : ""}`}
+
+        <div class="actions mt">
+          ${proj.supports_dry_run && html`<label class="check">
+            <input type="checkbox" checked=${dryRun} onChange=${e => setDryRun(e.target.checked)} /> 试运行(dry-run)
+          </label>`}
+          <button class="primary" onClick=${doLaunch} disabled=${busy || !kindOk} title=${!kindOk ? "当前 provider_kind 不被该项目支持，请先在左侧切换调用协议" : ""}>启动实验</button>
+        </div>
+      `;
+    }
+
+    function JobsPanel({ jobs, refreshJobs, toast }) {
+      const [activeJob, setActiveJob] = useState(null);
+      const [logs, setLogs] = useState([]);
+      const [results, setResults] = useState(null);
+      const esRef = useRef(null);
+      const logRef = useRef(null);
+
+      useEffect(() => {
+        if (esRef.current) { esRef.current.close(); esRef.current = null; }
+        setLogs([]);
+        if (!activeJob) return;
+        let closed = false, retries = 0, lastProg = false, timer = null, es = null;
+        const connect = isReconnect => {
+          if (closed) return;
+          if (isReconnect) { setLogs([]); lastProg = false; }  // 后端会重发完整 backlog，先清空避免重复
+          es = new EventSource(`/api/jobs/${activeJob}/logs/stream`);
+          esRef.current = es;
+          es.onmessage = ev => { retries = 0; lastProg = false; setLogs(l => [...l, ev.data]); };
+          es.addEventListener("progress", ev => {
+            retries = 0;
+            setLogs(l => {
+              if (lastProg && l.length) { const c = [...l]; c[c.length - 1] = ev.data; return c; }
+              return [...l, ev.data];
+            });
+            lastProg = true;
+          });
+          es.addEventListener("end", ev => { closed = true; es.close(); refreshJobs(); });
+          es.onerror = () => {
+            es.close();
+            if (closed || retries >= 5) return;  // 正常结束或超过重试上限：不再重连
+            retries += 1;
+            timer = setTimeout(() => connect(true), 1500);
+          };
+        };
+        connect(false);
+        return () => { closed = true; if (timer) clearTimeout(timer); if (es) es.close(); };
+      }, [activeJob]);
+
+      useEffect(() => {
+        if (logRef.current) logRef.current.scrollTop = logRef.current.scrollHeight;
+      }, [logs]);
+
+      const action = async (id, act) => {
+        try { await api(`/api/jobs/${id}/${act}`, { method: "POST" }); refreshJobs(); }
+        catch (e) { toast("操作失败：" + e.message); }
+      };
+      const loadResults = async id => {
+        try { const data = await api(`/api/jobs/${id}/results`); setResults({ jobId: id, ...data }); }
+        catch (e) { toast("读取结果失败：" + e.message); }
+      };
+
+      return html`
+        <h2>任务监控</h2>
+        ${!jobs.length && html`<div class="muted">暂无任务。在左侧选择实验后点击「启动实验」。</div>`}
+        ${jobs.map(j => {
+          const ringPercent = j.progress && j.progress.total > 0 ? j.progress.percent : null;
+          return html`
+          <div key=${j.id} class=${"job" + (j.id === activeJob ? " sel" : "")}>
+            <div class="job-head">
+              <${ProgressRing} percent=${ringPercent} status=${j.status} />
+              <div class="label"><b>${j.project_name}</b> · ${j.label} ${j.dry_run ? html`<span class="pill">dry-run</span>` : ""}</div>
+              <${StatusPill} status=${j.status} />
+            </div>
+            <div class="actions">
+              <button class="fixed-md" onClick=${() => setActiveJob(j.id === activeJob ? null : j.id)}>${j.id === activeJob ? "隐藏日志" : "查看日志"}</button>
+              ${j.status === "paused"
+                ? html`<button class="primary fixed-sm" onClick=${() => action(j.id, "resume")}>继续</button>`
+                : html`<button class="warn fixed-sm" onClick=${() => action(j.id, "pause")} disabled=${j.status !== "running"}>暂停</button>`}
+              <button class="danger fixed-sm" onClick=${() => action(j.id, "stop")} disabled=${!(j.status === "running" || j.status === "paused")}>停止</button>
+              <button onClick=${() => loadResults(j.id)}>结果文件</button>
+            </div>
+            ${j.progress && j.progress.total > 0
+              ? html`<div class="progress-text" style=${{ marginTop: "10px" }}>${j.progress.current}/${j.progress.total}（${j.progress.percent}%）</div>`
+              : (j.progress && j.progress.current > 0
+                ? html`<div class="progress-text" style=${{ marginTop: "10px" }}>已处理 ${j.progress.current}（进行中）</div>`
+                : "")}
+            ${j.status === "failed" && j.error ? html`<div class="errbox">${j.error}</div>` : ""}
+            ${j.id === activeJob && html`
+              <div class="log-head"><span class="t-title">${j.project_name} · ${j.label} — 实时日志</span></div>
+              <div class="log" ref=${logRef}>${logs.join("\n")}</div>`}
+            ${results && results.jobId === j.id && html`<div class="files">
+              <div class="muted text-xs files-head">结果目录：${results.results_dir}（${results.files.length} 个文件）</div>
+              ${results.files.slice(0, 60).map(f => html`<a key=${f.path} href=${`/api/jobs/${j.id}/results/download?path=${encodeURIComponent(f.path)}`} target="_blank">${f.path} · ${(f.size/1024).toFixed(1)} KB</a>`)}
+            </div>`}
+          </div>`;
+        })}
+      `;
+    }
+
+    function App() {
+      const [config, setConfig] = useState(null);
+      const [projects, setProjects] = useState([]);
+      const [jobs, setJobs] = useState([]);
+      const [history, setHistory] = useState([]);
+      const [toastMsg, setToastMsg] = useState(null);
+      const toast = msg => { setToastMsg(msg); setTimeout(() => setToastMsg(null), 2600); };
+
+      const refreshJobs = useCallback(async () => {
+        try {
+          const j = await api("/api/jobs");
+          setJobs(j);
+          setHistory(h => [...h.slice(-39), j.filter(x => x.status === "running").length]);
+        } catch (e) {}
+      }, []);
+
+      useEffect(() => {
+        api("/api/config").then(setConfig).catch(e => toast("配置加载失败：" + e.message));
+        api("/api/projects").then(setProjects).catch(e => toast("项目加载失败：" + e.message));
+        refreshJobs();
+        const t = setInterval(refreshJobs, 2000);
+        return () => clearInterval(t);
+      }, []);
+
+      const saveConfig = async () => {
+        // 数字框可能被清空成 ""，后端 pydantic 会校验失败(422)；保存前回退到默认值。
+        const numOr = (v, d) => { const n = Number(v); return v === "" || v == null || Number.isNaN(n) ? d : n; };
+        const llm = config.llm || {};
+        const clean = {
+          ...config,
+          llm: {
+            ...llm,
+            system: llm.system ?? "",
+            temperature: numOr(llm.temperature, 0.7),
+            max_tokens: numOr(llm.max_tokens, 1000),
+            concurrency: numOr(llm.concurrency, 8),
+            timeout: numOr(llm.timeout, 120),
+            max_retries: numOr(llm.max_retries, 5),
+          },
+        };
+        try { await api("/api/config", { method: "PUT", body: JSON.stringify(clean) }); setConfig(clean); toast("配置已保存"); }
+        catch (e) { toast("保存失败：" + e.message); }
+      };
+
+      const running = jobs.filter(j => j.status === "running").length;
+      const ok = jobs.filter(j => j.status === "succeeded").length;
+      const bad = jobs.filter(j => j.status === "failed" || j.status === "stopped").length;
+      const done = ok + bad;
+      const rate = done ? Math.round((ok / done) * 100) : null;
+
+      return html`
+        <div class="shell">
+          <header class="topbar">
+            <div class="brand">
+              <div class="mark">L</div>
+              <div>
+                <div class="title">LLM 认知实验平台</div>
+                <div class="subtitle">${projects.length} 个研究项目 · 统一编排与实时监控</div>
+              </div>
+            </div>
+            <div class="spacer"></div>
+            <div class="live-pill"><span class="dot live"></span> 实时监控 · 每 2s 自动刷新</div>
+          </header>
+
+          <div class="kpi-bar">
+            <div class="kpi run">
+              <div class="k-label"><span class="dot live"></span>运行中</div>
+              <div class="k-row"><div class="k-value">${running}</div><${Sparkline} data=${history} /></div>
+            </div>
+            <div class="kpi ok"><div class="k-label">成功</div><div class="k-row"><div class="k-value">${ok}</div></div></div>
+            <div class="kpi bad"><div class="k-label">失败 / 停止</div><div class="k-row"><div class="k-value">${bad}</div></div></div>
+            <div class="kpi rate"><div class="k-label">成功率</div><div class="k-row"><div class="k-value">${rate == null ? "—" : rate + "%"}</div></div></div>
+            <div class="kpi total"><div class="k-label">任务总数</div><div class="k-row"><div class="k-value">${jobs.length}</div><div class="k-sub">${projects.length} 个项目</div></div></div>
+          </div>
+
+          <div class="app">
+            <div class="col"><${ConfigPanel} config=${config} setConfig=${setConfig} onSave=${saveConfig} /></div>
+            <div class="col"><${ProjectPanel} projects=${projects} config=${config} toast=${toast} refreshJobs=${refreshJobs} /></div>
+            <div class="col"><${JobsPanel} jobs=${jobs} refreshJobs=${refreshJobs} toast=${toast} /></div>
+          </div>
+        </div>
+        ${toastMsg && html`<div class="toast">${toastMsg}</div>`}
+      `;
+    }
+
+    createRoot(document.getElementById("root")).render(html`<${App} />`);
+  </script>
+</body>
+</html>

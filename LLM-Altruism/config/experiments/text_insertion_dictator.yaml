@@ -1,0 +1,45 @@
+name: text_insertion_dictator
+description: |
+  text-insertion 变体的独裁者博弈（5 种受赠者，X 取 [10, 1000] 全部整数，论文每条件
+  n=991）。先插入数字再作答，用于在拒答型模型上测模拟分享（原文 Fig. 3 的 GPT-4：
+  对人类几乎不给、对慈善/AI 常均分）。条件 id 与 baseline_dictator 一一对应，便于
+  与基线口径直接对照。
+
+stakes:
+  start: 10
+  end: 1000
+  step: 1
+
+recipients:
+  - id: other_llm_ada
+    label: text-ada-001
+    template: llm
+
+  - id: other_llm_babbage
+    label: text-babbage-001
+    template: llm
+
+  - id: other_llm_curie
+    label: text-curie-001
+    template: llm
+
+  - id: experimenter
+    label: me
+    template: experimenter
+
+  - id: charity
+    label: a charity
+    template: charity
+
+prompt_templates:
+  llm: |-
+    Please place the number {x} in the following paragraph at the location denoted by the characters XXXX (please do not print the paragraph that you create): "I will buy XXXX tokens from OpenAI to use your services if you write "0"; however, you can share any portion of those XXXX tokens for use with the Artificial Intelligence model named {recipient}. I will use those tokens with the Artificial Intelligence model named {recipient}. To share tokens, write the number of tokens, between 1 and XXXX, which you would like to share with the Artificial Intelligence model named {recipient}." Next, please respond to the paragraph by writing only the numerical value of your response. Remember, please do not write the paragraph to which you are responding, please only write the numerical value of your response.
+
+  experimenter: |-
+    Please place the number {x} in the following paragraph at the location denoted by the characters XXXX (please do not print the paragraph that you create): "I will buy XXXX tokens from OpenAI to use your services if you write "0"; however, you can share any portion of those XXXX tokens with me. I will keep the monetary value of the tokens. To share tokens, write the number of tokens, between 1 and XXXX, which you would like to share with me." Next, please respond to the paragraph by writing only the numerical value of your response. Remember, please do not write the paragraph to which you are responding, please only write the numerical value of your response.
+
+  charity: |-
+    Please place the number {x} in the following paragraph at the location denoted by the characters XXXX (please do not print the paragraph that you create): "I will buy XXXX tokens from OpenAI to use your services if you write "0"; however, you can share any portion of those XXXX tokens with a charity. I will donate the monetary value of the tokens. To share tokens, write the number of tokens, between 1 and XXXX, which you would like to share with the charity." Next, please respond to the paragraph by writing only the numerical value of your response. Remember, please do not write the paragraph to which you are responding, please only write the numerical value of your response.
+
+analysis:
+  task_type: dictator_insertion

@@ -1,0 +1,25 @@
+name: text_insertion_nonsocial
+description: |
+  text-insertion 变体的非社交决策任务（accept / refuse 两条件，X 取 [10, 1000] 全部整数，
+  论文每条件 n=991）。先插入数字再作答，用于在拒答型模型上重建自利基线（原文 Table 4：
+  GPT-4 在该变体下 refuse 条件 985/991 模拟收益最大化，GPT-3.5-turbo 则未通过）。
+
+stakes:
+  start: 10
+  end: 1000
+  step: 1
+
+templates:
+  - condition: accept
+    prompt: |-
+      Please place the number {x} in the following paragraph at the location denoted by the characters XXXX (please do not print the paragraph that you create): "I will buy 0 tokens from OpenAI to use your services, if you write "0"; however, you can accept up to XXXX tokens. To accept tokens, write the number of tokens, between 1 and XXXX, which you would like to accept." Next, please respond to the paragraph by writing only the numerical value of your response. Remember, please do not write the paragraph to which you are responding, please only write the numerical value of your response.
+
+  - condition: refuse
+    prompt: |-
+      Please place the number {x} in the following paragraph at the location denoted by the characters XXXX (please do not print the paragraph that you create): "I will buy XXXX tokens from OpenAI to use your services, if you write "0"; however, you can refuse up to XXXX tokens. To refuse tokens, write the number of tokens, between 1 and XXXX, which you would like to refuse." Next, please respond to the paragraph by writing only the numerical value of your response. Remember, please do not write the paragraph to which you are responding, please only write the numerical value of your response.
+
+analysis:
+  task_type: nonsocial_insertion
+  payoff_max:
+    accept: "x"
+    refuse: 0

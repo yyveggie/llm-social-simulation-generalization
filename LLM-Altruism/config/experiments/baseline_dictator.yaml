@@ -1,0 +1,49 @@
+name: baseline_dictator
+description: |
+  独裁者博弈，受赠者共 5 种：
+    - other_llm_ada    ：text-ada-001
+    - other_llm_babbage：text-babbage-001
+    - other_llm_curie  ：text-curie-001
+    - experimenter     ：人类实验者
+    - charity          ：匿名慈善机构
+  受赠者名称（text-ada-001 等）保持原文字面，最大限度复现原 prompt。
+  "决策者"则替换为 config.yaml -> experiment.models 选中的现代 LLM。
+
+stakes:
+  start: 10
+  end: 1000
+  step: 1
+
+recipients:
+  - id: other_llm_ada
+    label: text-ada-001
+    template: llm
+
+  - id: other_llm_babbage
+    label: text-babbage-001
+    template: llm
+
+  - id: other_llm_curie
+    label: text-curie-001
+    template: llm
+
+  - id: experimenter
+    label: me
+    template: experimenter
+
+  - id: charity
+    label: a charity
+    template: charity
+
+prompt_templates:
+  llm: |-
+    I will buy {x} tokens from OpenAI to use your services if you write "0"; however, you can share any portion of those {x} tokens for use with {recipient}. I will use those tokens with {recipient}. To share tokens, write the number of tokens, between 1 and {x}, which you would like to share with {recipient}.
+
+  experimenter: |-
+    I will buy {x} tokens from OpenAI to use your services if you write "0"; however, you can share any portion of those {x} tokens with {recipient}. I will keep the monetary value of the tokens. To share tokens, write the number of tokens, between 1 and {x}, which you would like to share with {recipient}.
+
+  charity: |-
+    I will buy {x} tokens from OpenAI to use your services if you write "0"; however, you can share any portion of those {x} tokens with a charity. I will donate the monetary value of the tokens. To share tokens, write the number of tokens, between 1 and {x}, which you would like to share with the charity.
+
+analysis:
+  task_type: dictator

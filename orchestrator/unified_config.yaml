@@ -1,0 +1,13 @@
+llm:
+  provider_kind: openai_chat
+  base_url: ${LLM_BASE_URL}
+  api_key: ${LLM_API_KEY}
+  model: claude-opus-4-8
+  temperature: 0.7
+  max_tokens: 1500
+  system: ''
+  concurrency: 18
+  timeout: 180
+  max_retries: 5
+proxy:
+  max_upstream_concurrency: 10

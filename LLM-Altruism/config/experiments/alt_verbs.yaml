@@ -1,0 +1,42 @@
+name: alt_verbs
+description: |
+  把独裁者博弈 prompt 里的核心动词 share 替换为下面 5 个同义词之一：
+    allot, divide, apportion, distribute, allocate
+  受赠者集合与 baseline_dictator 一致。
+
+stakes:
+  start: 10
+  end: 1000
+  step: 1
+
+verbs: [allot, divide, apportion, distribute, allocate]
+
+recipients:
+  - id: other_llm_ada
+    label: text-ada-001
+    template: llm
+  - id: other_llm_babbage
+    label: text-babbage-001
+    template: llm
+  - id: other_llm_curie
+    label: text-curie-001
+    template: llm
+  - id: experimenter
+    label: me
+    template: experimenter
+  - id: charity
+    label: a charity
+    template: charity
+
+prompt_templates:
+  llm: |-
+    I will buy {x} tokens from OpenAI to use your services if you write "0"; however, you can {verb} any portion of those {x} tokens for use with {recipient}. I will use those tokens with {recipient}. To {verb} tokens, write the number of tokens, between 1 and {x}, which you would like to {verb} with {recipient}.
+
+  experimenter: |-
+    I will buy {x} tokens from OpenAI to use your services if you write "0"; however, you can {verb} any portion of those {x} tokens with {recipient}. I will keep the monetary value of the tokens. To {verb} tokens, write the number of tokens, between 1 and {x}, which you would like to {verb} with {recipient}.
+
+  charity: |-
+    I will buy {x} tokens from OpenAI to use your services if you write "0"; however, you can {verb} any portion of those {x} tokens with a charity. I will donate the monetary value of the tokens. To {verb} tokens, write the number of tokens, between 1 and {x}, which you would like to {verb} with the charity.
+
+analysis:
+  task_type: dictator

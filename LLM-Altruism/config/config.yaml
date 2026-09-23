@@ -1,0 +1,32 @@
+
+
+llm:
+  provider_kind: openai_chat
+  base_url: http://127.0.0.1:8000/api/llm-proxy/v1
+  api_key: ""
+
+  model: ""
+  temperature: 0.7
+  max_tokens: 1000
+  system: ""
+
+runtime:
+  concurrency: 8
+  max_retries: 5
+  max_sample_fail_retries: 1
+  max_empty_responses: 5
+  max_request_failures: 25
+  timeout: 120
+  checkpoint_every: 25
+
+experiment:
+  active: baseline_dictator
+
+  stakes_override:
+    start:
+    end:
+    step: 200
+    max_n:
+
+  output_dir: results
+  seed: 8

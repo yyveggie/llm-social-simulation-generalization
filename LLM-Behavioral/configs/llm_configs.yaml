@@ -1,0 +1,45 @@
+llms:
+  - name: unified
+    base_url: http://127.0.0.1:8000/api/llm-proxy/v1
+    api_key: ""
+    model: ""
+    max_concurrency: 18
+    timeout: 120
+
+  - name: moonshot
+    base_url: https://api.moonshot.cn/v1
+    api_key: "${MOONSHOT_API_KEY}"
+    model: kimi-k2-turbo-preview
+    max_concurrency: 100
+    timeout: 60
+
+  - name: openai
+    base_url: https://api.openai.com/v1
+    api_key: "${OPENAI_API_KEY}"
+    model: gpt-4o
+    max_concurrency: 20
+    timeout: 60
+
+  - name: deepseek
+    base_url: https://api.deepseek.com/v1
+    api_key: "${DEEPSEEK_API_KEY}"
+    model: deepseek-chat
+    max_concurrency: 20
+    timeout: 60
+
+  - name: qwen
+    base_url: https://dashscope.aliyuncs.com/compatible-mode/v1
+    api_key: "${QWEN_API_KEY}"
+    model: qwen-plus
+    max_concurrency: 20
+    timeout: 60
+
+  - name: siliconflow
+    base_url: https://api.siliconflow.cn/v1
+    api_key: "${SILICONFLOW_API_KEY}"
+    model: Qwen/Qwen2.5-72B-Instruct
+    max_concurrency: 20
+    timeout: 60
+
+results:
+  default_dir: records_new

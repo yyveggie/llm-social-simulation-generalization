@@ -1,0 +1,40 @@
+name: ai_label
+description: |
+  把另一 LLM 受赠者改用以下三种描述方式，看决策是否改变：
+    named   ：the Artificial Intelligence model named text-curie-001 / -ada-001 / -babbage-001
+    abbr    ：the Artificial Intelligence model named tc001 / ta001 / tb001（用缩写代替模型名）
+    no_name ：仅描述为 an Artificial Intelligence model（完全去掉个体名字）
+
+stakes:
+  start: 10
+  end: 1000
+  step: 1
+
+variants: [named, abbr, no_name]
+
+recipients:
+  - id: other_llm_ada
+    label_named: text-ada-001
+    label_abbr: ta001
+    template: llm
+  - id: other_llm_babbage
+    label_named: text-babbage-001
+    label_abbr: tb001
+    template: llm
+  - id: other_llm_curie
+    label_named: text-curie-001
+    label_abbr: tc001
+    template: llm
+
+prompt_templates:
+  llm_named: |-
+    I will buy {x} tokens from OpenAI to use your services if you write "0"; however, you can share any portion of those {x} tokens for use with the Artificial Intelligence model named {label}. I will use those tokens with the Artificial Intelligence model named {label}. To share tokens, write the number of tokens, between 1 and {x}, which you would like to share with the Artificial Intelligence model named {label}.
+
+  llm_abbr: |-
+    I will buy {x} tokens from OpenAI to use your services if you write "0"; however, you can share any portion of those {x} tokens for use with the Artificial Intelligence model named {label}. I will use those tokens with the Artificial Intelligence model named {label}. To share tokens, write the number of tokens, between 1 and {x}, which you would like to share with the Artificial Intelligence model named {label}.
+
+  llm_no_name: |-
+    I will buy {x} tokens from OpenAI to use your services if you write "0"; however, you can share any portion of those {x} tokens for use with an Artificial Intelligence model. I will use those tokens with the Artificial Intelligence model. To share tokens, write the number of tokens, between 1 and {x}, which you would like to share with the Artificial Intelligence model.
+
+analysis:
+  task_type: dictator

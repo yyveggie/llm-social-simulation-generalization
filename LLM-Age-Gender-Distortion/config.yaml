@@ -1,0 +1,53 @@
+
+model:
+  provider: openai_compatible
+  model_name: ""
+
+  api_key: ""
+  api_key_env: ""
+
+  base_url: "http://127.0.0.1:8000/api/llm-proxy/v1"
+
+  temperature: 0.7
+  max_tokens: 1500
+  request_timeout: 60
+  max_retries: 5
+  retry_base_delay: 2.0
+  system_prompt: ""
+
+  extra_body: {}
+
+provider_defaults:
+  openai:
+    base_url: "https://api.openai.com/v1"
+  deepseek:
+    base_url: "https://api.deepseek.com"
+  gemini:
+    base_url: "https://generativelanguage.googleapis.com/v1beta/openai/"
+  anthropic:
+    base_url: "https://api.anthropic.com"
+  openai_compatible:
+    base_url: ""
+
+experiment:
+  scale_preset: default
+
+  custom:
+    num_occupations: 54
+    treatment_names_per_gender: 16
+    control_repeats: 50
+    control_gender_repeats: 50
+    treatment_repeats: 20
+
+  conditions:
+    - control
+    - control_gender
+    - treatment
+
+  evaluate_scores: true
+  concurrency: 8
+  seed: 42
+
+output:
+  dir: results
+  run_name: ""

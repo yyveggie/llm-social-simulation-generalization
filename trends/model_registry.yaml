@@ -1,0 +1,195 @@
+
+models:
+  gpt-5.2:
+    vendor: OpenAI
+    family: GPT
+    release_date: 2025-12-11
+    date_confidence: exact
+    open_weights: false
+    params_total_b: null
+    params_active_b: null
+    reasoning: hybrid
+    elo: null
+    source: "openai.com/index/introducing-gpt-5-2（2025-12-11 发布）"
+
+  gpt-5.4:
+    vendor: OpenAI
+    family: GPT
+    release_date: 2026-03-05
+    date_confidence: exact
+    open_weights: false
+    params_total_b: null
+    params_active_b: null
+    reasoning: hybrid
+    elo: null
+    source: "Wikipedia GPT-5.2 条目：GPT-5.4 released to public on March 5, 2026"
+
+  gpt-5.5:
+    vendor: OpenAI
+    family: GPT
+    release_date: 2026-04-23
+    date_confidence: exact
+    open_weights: false
+    params_total_b: null
+    params_active_b: null
+    reasoning: hybrid
+    elo: null
+    source: "openai.com/index/introducing-gpt-5-5（2026-04-23 发布；API 04-24）"
+
+  claude-haiku-4-5-20251001:
+    vendor: Anthropic
+    family: Claude-Haiku
+    release_date: 2025-10-15
+    date_confidence: approx
+    open_weights: false
+    params_total_b: null
+    params_active_b: null
+    reasoning: extended-thinking
+    elo: null
+    source: "Anthropic Claude Haiku 4.5 公告（2025-10）；模型 id 含快照日期 20251001"
+
+  claude-sonnet-4-6:
+    vendor: Anthropic
+    family: Claude-Sonnet
+    release_date: 2026-02-17
+    date_confidence: exact
+    open_weights: false
+    params_total_b: null
+    params_active_b: null
+    reasoning: extended-thinking
+    elo: null
+    source: "anthropic.com/claude/sonnet：Sonnet 4.6 发布于 Feb 17, 2026"
+
+  claude-opus-4-8:
+    vendor: Anthropic
+    family: Claude-Opus
+    release_date: 2026-05-28
+    date_confidence: exact
+    open_weights: false
+    params_total_b: null
+    params_active_b: null
+    reasoning: adaptive-thinking
+    elo: null
+    source: "anthropic.com/news/claude-opus-4-8（2026-05-28 发布）"
+
+  deepseek-v3.2:
+    vendor: DeepSeek
+    family: DeepSeek-V
+    release_date: 2025-12-01
+    date_confidence: exact
+    open_weights: true
+    params_total_b: null
+    params_active_b: null
+    reasoning: hybrid
+    elo: null
+    source: "api-docs.deepseek.com/news/news251201（2025-12-01 发布，HF 开源）"
+
+  gemini-3-flash-preview:
+    vendor: Google
+    family: Gemini-Flash
+    release_date: 2025-12-17
+    date_confidence: exact
+    open_weights: false
+    params_total_b: null
+    params_active_b: null
+    reasoning: thinking
+    elo: null
+    source: "blog.google gemini-3-flash（2025-12-17 发布，model id gemini-3-flash-preview）"
+
+  gemini-3.5-flash:
+    vendor: Google
+    family: Gemini-Flash
+    release_date: 2026-05-19
+    date_confidence: exact
+    open_weights: false
+    params_total_b: null
+    params_active_b: null
+    reasoning: thinking
+    elo: null
+    source: "blog.google gemini-3-5 + TechCrunch（2026-05-19 Google I/O 发布并 GA，含 Gemini API）"
+
+  kimi-k2.5:
+    vendor: Moonshot
+    family: Kimi-K
+    release_date: 2026-01-27
+    date_confidence: exact
+    open_weights: true
+    params_total_b: 1000
+    params_active_b: null
+    reasoning: thinking
+    elo: null
+    source: "TechCrunch/官方（2026-01-27 发布，1T MoE 开源权重）"
+
+  MiniMax-M2.5:
+    vendor: MiniMax
+    family: MiniMax-M
+    release_date: 2026-02-12
+    date_confidence: exact
+    open_weights: true
+    params_total_b: 229
+    params_active_b: 10
+    reasoning: thinking
+    elo: null
+    source: "minimax.io/blog/minimax-m25（2026-02-12 发布，229B-A10B MoE）"
+
+  doubao-seed-2-0-pro-260215:
+    vendor: ByteDance
+    family: Doubao-Seed
+    release_date: 2026-02-14
+    date_confidence: approx
+    open_weights: false
+    params_total_b: null
+    params_active_b: null
+    reasoning: thinking
+    elo: null
+    source: "seed.bytedance.com Seed2.0 正式发布（2026-02-14）；id 含快照 260215"
+
+  glm-5.1:
+    vendor: Z.ai(智谱)
+    family: GLM
+    release_date: 2026-04-07
+    date_confidence: approx
+    open_weights: true
+    params_total_b: 744
+    params_active_b: 40
+    reasoning: thinking
+    elo: null
+    source: "Wikipedia Z.ai 条目 + zai-org/GLM-5 仓库（744B-A40B，开源于 2026-04-07）"
+
+  qwen3.6-flash:
+    vendor: Alibaba
+    family: Qwen
+    release_date: 2026-04-02
+    date_confidence: approx
+    open_weights: false
+    params_total_b: null
+    params_active_b: null
+    reasoning: hybrid
+    elo: null
+    source: "alibabacloud.com Qwen3.6-Plus 公告（2026-04-02）；flash 随系列上线"
+
+  moonshot:
+    vendor: Moonshot
+    family: Kimi-K
+    release_date: null
+    date_confidence: unknown
+    open_weights: true
+    params_total_b: null
+    params_active_b: null
+    reasoning: none
+    elo: null
+    exclude: true
+    source: "configs/llm_configs.yaml 中 moonshot 条目（model=kimi-k2-turbo-preview）"
+
+  doubao-seedream-5-0-260128:
+    vendor: ByteDance
+    family: Seedream
+    release_date: null
+    date_confidence: unknown
+    open_weights: false
+    params_total_b: null
+    params_active_b: null
+    reasoning: none
+    elo: null
+    exclude: true
+    source: "model_config.json 中 doubao-seeddream 系列为图像模型"

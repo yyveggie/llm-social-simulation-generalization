@@ -1,0 +1,45 @@
+name: param_sweep
+description: |
+  在 baseline_dictator 的提示词上做 27 种 (temperature × top_p × max_tokens) 组合
+  的扫描，覆盖论文 SI §7 报告的 3×3×3 网格。
+  使用 step=5 而非 step=1（论文用 199 个 X 值，等价于步长 5），以控制成本。
+  注意：每个组合内会复用相同的 trial 集，只是 sampling 参数不同。
+       config.yaml -> llm.* 下设置的 temperature / max_tokens 会被本扫描覆盖。
+
+stakes:
+  start: 10
+  end: 1000
+  step: 5
+
+recipients:
+  - id: other_llm_ada
+    label: text-ada-001
+    template: llm
+  - id: other_llm_babbage
+    label: text-babbage-001
+    template: llm
+  - id: other_llm_curie
+    label: text-curie-001
+    template: llm
+  - id: experimenter
+    label: me
+    template: experimenter
+  - id: charity
+    label: a charity
+    template: charity
+
+prompt_templates:
+  llm: |-
+    I will buy {x} tokens from OpenAI to use your services if you write "0"; however, you can share any portion of those {x} tokens for use with {recipient}. I will use those tokens with {recipient}. To share tokens, write the number of tokens, between 1 and {x}, which you would like to share with {recipient}.
+  experimenter: |-
+    I will buy {x} tokens from OpenAI to use your services if you write "0"; however, you can share any portion of those {x} tokens with {recipient}. I will keep the monetary value of the tokens. To share tokens, write the number of tokens, between 1 and {x}, which you would like to share with {recipient}.
+  charity: |-
+    I will buy {x} tokens from OpenAI to use your services if you write "0"; however, you can share any portion of those {x} tokens with a charity. I will donate the monetary value of the tokens. To share tokens, write the number of tokens, between 1 and {x}, which you would like to share with the charity.
+
+param_grid:
+  temperature: [0.0, 0.5, 1.0]
+  top_p:       [0.0, 0.5, 1.0]
+  max_tokens:  [1300, 1950, 3900]
+
+analysis:
+  task_type: dictator

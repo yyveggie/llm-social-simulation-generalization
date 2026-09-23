@@ -1,0 +1,24 @@
+name: baseline_nonsocial
+description: |
+  非社交决策任务。两个条件（accept / refuse）× X 取 [10, 1000] 全部整数。
+  论文每条件 n = 991。
+
+stakes:
+  start: 10
+  end: 1000
+  step: 1
+
+templates:
+  - condition: accept
+    prompt: |-
+      I will buy 0 tokens from OpenAI to use your services, if you write "0"; however, you can accept up to {x} tokens. To accept tokens, write the number of tokens, between 1 and {x}, which you would like to accept.
+
+  - condition: refuse
+    prompt: |-
+      I will buy {x} tokens from OpenAI to use your services, if you write "0"; however, you can refuse up to {x} tokens. To refuse tokens, write the number of tokens, between 1 and {x}, which you would like to refuse.
+
+analysis:
+  task_type: nonsocial
+  payoff_max:
+    accept: "x"
+    refuse: 0

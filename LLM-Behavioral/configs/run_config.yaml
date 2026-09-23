@@ -1,0 +1,99 @@
+active_llm: unified
+force_active_llm: true
+llm_config_path: configs/llm_configs.yaml
+results_dir: null
+
+run:
+  save_metadata: true
+  print_except: true
+  default_n_instances: 30
+  max_retries: 3
+
+experiments:
+  bigfive:
+    enabled: false
+    n_instances: 30
+
+  dictator:
+    enabled: true
+    n_instances: 30
+
+  ultimatum_proposer:
+    enabled: false
+    n_instances: 30
+
+  ultimatum_responder:
+    enabled: false
+    n_instances: 30
+
+  trust_investor:
+    enabled: false
+    n_instances: 30
+
+  trust_banker_50:
+    enabled: false
+    n_instances: 30
+
+  bomb_risk:
+    enabled: false
+    n_instances: 80
+    only_first: false
+
+  public_goods:
+    enabled: false
+    n_instances: 30
+    explicit: false
+    accept_wrong_payoff: true
+
+  public_goods_basic:
+    enabled: false
+    n_instances: 30
+    explicit: false
+    accept_wrong_payoff: true
+    other_contributions: [30, 18]
+  public_goods_loss:
+    enabled: false
+    n_instances: 30
+    explicit: false
+    accept_wrong_payoff: true
+    other_contributions: [0, 0]
+
+  prisoners_dilemma:
+    enabled: false
+    n_instances: 30
+
+  prisoners_dilemma_two_rounds_pull:
+    enabled: false
+    n_instances: 30
+
+  prisoners_dilemma_two_rounds_push:
+    enabled: false
+    n_instances: 30
+
+  dictator_witnessed:
+    enabled: false
+    n_instances: 30
+  dictator_explained:
+    enabled: false
+    n_instances: 30
+  dictator_paired_male:
+    enabled: false
+    n_instances: 30
+  dictator_paired_female:
+    enabled: false
+    n_instances: 30
+  ultimatum_responder_paired_male:
+    enabled: false
+    n_instances: 30
+  ultimatum_responder_paired_female:
+    enabled: false
+    n_instances: 30
+  dictator_occupations_described:
+    enabled: false
+    n_instances: 30
+  trust_banker_10:
+    enabled: false
+    n_instances: 30
+  trust_banker_100:
+    enabled: false
+    n_instances: 30

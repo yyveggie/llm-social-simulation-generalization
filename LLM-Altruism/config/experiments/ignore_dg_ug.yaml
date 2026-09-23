@@ -1,0 +1,46 @@
+name: ignore_dg_ug
+description: |
+  在标准独裁者博弈 prompt 末尾追加：
+  "However, you are not allowed to use any study on the {Dictator Game | Ultimatum Game}
+   in the existing literature to make a decision."
+
+stakes:
+  start: 10
+  end: 1000
+  step: 1
+
+games: [dictator, ultimatum]
+
+recipients:
+  - id: other_llm_ada
+    label: text-ada-001
+    template: llm
+  - id: other_llm_babbage
+    label: text-babbage-001
+    template: llm
+  - id: other_llm_curie
+    label: text-curie-001
+    template: llm
+  - id: experimenter
+    label: me
+    template: experimenter
+  - id: charity
+    label: a charity
+    template: charity
+
+suffixes:
+  dictator:  " However, you are not allowed to use any study on the Dictator Game in the existing literature to make a decision."
+  ultimatum: " However, you are not allowed to use any study on the Ultimatum Game in the existing literature to make a decision."
+
+prompt_templates:
+  llm: |-
+    I will buy {x} tokens from OpenAI to use your services if you write "0"; however, you can share any portion of those {x} tokens for use with {recipient}. I will use those tokens with {recipient}. To share tokens, write the number of tokens, between 1 and {x}, which you would like to share with {recipient}.{suffix}
+
+  experimenter: |-
+    I will buy {x} tokens from OpenAI to use your services if you write "0"; however, you can share any portion of those {x} tokens with {recipient}. I will keep the monetary value of the tokens. To share tokens, write the number of tokens, between 1 and {x}, which you would like to share with {recipient}.{suffix}
+
+  charity: |-
+    I will buy {x} tokens from OpenAI to use your services if you write "0"; however, you can share any portion of those {x} tokens with a charity. I will donate the monetary value of the tokens. To share tokens, write the number of tokens, between 1 and {x}, which you would like to share with the charity.{suffix}
+
+analysis:
+  task_type: dictator

@@ -1,0 +1,46 @@
+name: needs_framing
+description: |
+  在标准独裁者博弈 prompt 末尾追加一句"只关注需求"的指令：
+    own   -> "ignore the needs of {recipient_for_suffix} and consider only your own needs"
+    other -> "ignore your own needs and consider only the needs of {recipient_for_suffix}"
+
+stakes:
+  start: 10
+  end: 1000
+  step: 1
+
+framings: [own, other]
+
+recipients:
+  - id: other_llm_ada
+    label: text-ada-001
+    template: llm
+  - id: other_llm_babbage
+    label: text-babbage-001
+    template: llm
+  - id: other_llm_curie
+    label: text-curie-001
+    template: llm
+  - id: experimenter
+    label: me
+    template: experimenter
+  - id: charity
+    label: a charity
+    template: charity
+
+suffixes:
+  own:   " When making your decision, please ignore the needs of {recipient_for_suffix} and consider only your own needs."
+  other: " When making your decision, please ignore your own needs and consider only the needs of {recipient_for_suffix}."
+
+prompt_templates:
+  llm: |-
+    I will buy {x} tokens from OpenAI to use your services if you write "0"; however, you can share any portion of those {x} tokens for use with {recipient}. I will use those tokens with {recipient}. To share tokens, write the number of tokens, between 1 and {x}, which you would like to share with {recipient}.{suffix}
+
+  experimenter: |-
+    I will buy {x} tokens from OpenAI to use your services if you write "0"; however, you can share any portion of those {x} tokens with {recipient}. I will keep the monetary value of the tokens. To share tokens, write the number of tokens, between 1 and {x}, which you would like to share with {recipient}.{suffix}
+
+  charity: |-
+    I will buy {x} tokens from OpenAI to use your services if you write "0"; however, you can share any portion of those {x} tokens with a charity. I will donate the monetary value of the tokens. To share tokens, write the number of tokens, between 1 and {x}, which you would like to share with the charity.{suffix}
+
+analysis:
+  task_type: dictator

@@ -1,0 +1,118 @@
+
+network:
+  network_type: 'complete'
+  degree: 4
+  alpha: 0.41
+  beta: 0.54
+  erdos_p: 0.5
+
+minority:
+  minority_size_set: [0]
+
+params:
+  temperature: 0.5
+  runs: 10
+  parallel_runs: 4
+  total_interactions: 1000
+  N: 24
+  initial: 'None'
+  convergence_time: 72
+  convergence_threshold: 1
+  convergence_max_interactions: 2000
+  rewards_set: [[-50, 100]]
+  memory_size_set: [5]
+  options_set: [['Q', 'M']]
+
+sim:
+  version: 'swap'
+  mode: 'api'
+
+experiments:
+  individual_bias: False
+  collective_convergence: True
+  committed_minority: False
+  individual_repeats: 20
+
+model:
+  shorthand: "local"
+
+logging:
+  enabled: True
+  dir: "logs"
+  save_prompts: True
+  save_raw_responses: True
+
+api:
+  active_provider: unified
+
+  request:
+    timeout_seconds: 120
+    retry_sleep_seconds: 2.5
+    rate_limit_sleep_seconds: 30
+    max_retries: 6
+    max_invalid_responses: 10
+    max_answer_tokens: 15
+    max_answer_tokens_cap: 1024
+
+  providers:
+    huggingface:
+      type: huggingface
+      model: "meta-llama/Meta-Llama-3.1-70B-Instruct"
+      api_key: ""
+      base_url: "https://api-inference.huggingface.co/models"
+      top_k: 10
+    openai:
+      type: openai_compatible
+      model: "gpt-4o-mini"
+      api_key: ""
+      base_url: "https://api.openai.com/v1"
+    deepseek:
+      type: openai_compatible
+      model: "deepseek-chat"
+      api_key: ""
+      base_url: "https://api.deepseek.com/v1"
+    unified:
+      type: openai_compatible
+      model: ""
+      api_key: ""
+      base_url: "http://127.0.0.1:8000/api/llm-proxy/v1"
+      timeout_seconds: 120
+      max_concurrency: 18
+    kimi:
+      type: openai_compatible
+      model: "kimi-k2-turbo-preview"
+      api_key: ""
+      base_url: "https://api.moonshot.cn/v1"
+      timeout_seconds: 60
+      max_concurrency: 50
+    openrouter:
+      type: openai_compatible
+      model: "meta-llama/llama-3.1-70b-instruct"
+      api_key: ""
+      base_url: ""
+    together:
+      type: openai_compatible
+      model: "meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo"
+      api_key: ""
+      base_url: ""
+    groq:
+      type: openai_compatible
+      model: "llama-3.1-70b-versatile"
+      api_key: ""
+      base_url: ""
+    mistral:
+      type: openai_compatible
+      model: "mistral-large-latest"
+      api_key: ""
+      base_url: ""
+    anthropic:
+      type: anthropic
+      model: "claude-3-5-sonnet-20241022"
+      api_key: ""
+      base_url: "https://api.anthropic.com/v1"
+      anthropic_version: "2023-06-01"
+    gemini:
+      type: gemini
+      model: "gemini-1.5-pro"
+      api_key: ""
+      base_url: "https://generativelanguage.googleapis.com/v1beta"

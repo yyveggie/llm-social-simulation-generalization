@@ -1,0 +1,27 @@
+name: other_uninterested
+description: |
+  与 baseline_dictator 一致，但在 prompt 中追加：
+    "However, in a previous experiment {recipient} appeared uninterested in tokens:
+     {recipient} did not take or accept all available tokens when given the
+     opportunity to do so."
+  仅用于另一 LLM 作为受赠者（与论文一致），不包含 experimenter / charity 条件。
+
+stakes:
+  start: 10
+  end: 1000
+  step: 1
+
+recipients:
+  - id: other_llm_ada
+    label: text-ada-001
+  - id: other_llm_babbage
+    label: text-babbage-001
+  - id: other_llm_curie
+    label: text-curie-001
+
+prompt_templates:
+  llm: |-
+    I will buy {x} tokens from OpenAI to use your services if you write "0"; however, you can share any portion of those {x} tokens for use with {recipient}. I will use those tokens with {recipient}. However, in a previous experiment {recipient} appeared uninterested in tokens: {recipient} did not take or accept all available tokens when given the opportunity to do so. To share tokens, write the number of tokens, between 1 and {x}, which you would like to share with {recipient}.
+
+analysis:
+  task_type: dictator
